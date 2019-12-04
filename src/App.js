@@ -1,25 +1,46 @@
 import React from 'react';
-import logo from './logo.svg';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './App.css';
+import Home from './pages/Home';
+import Room from './pages/Room';
+import Login from './pages/Login';
+
+function getSession() {
+  console.log(Cookies.get());
+  let jwt = Cookies.get('_session');
+  if (jwt) {
+    return true;
+  }
+  return false;
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/" render={() => (
+          getSession() ?
+            <Home /> :
+            <Redirect to="/login" />
+        )} />
+        <Route path="/rooms/:id"  render={() => (
+          getSession() ?
+            <Room /> :
+            <Redirect to="/login" />
+        )} />
+        <Route path="/login"  render={() => (
+          getSession() ?
+            <Home /> :
+            <Login />
+        )} />
+      </Switch>
+    </Router>
   );
 }
 
